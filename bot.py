@@ -273,6 +273,27 @@ async def process_password(message: types.Message, state: FSMContext):
                 user_message=message
             )
 
+            df = pd.read_excel(file_path)
+
+            long_message = ""
+            for _, row in df.iterrows():
+                сотрудник = row['Сотрудник']
+                рег_номер = row['Рег. номер']
+                рег_срок = row['Рег. срок']
+                патент_номер = row['Патент номер']
+                патент_срок = row['Патент срок']
+
+                message_text = (
+                    f"{сотрудник}\n"
+                    f"\tСрок действия регистрации: {рег_срок}\n"
+                    f"\tСрок действия патента: {патент_срок}\n\n"
+                )
+                long_message += message_text
+
+            await message.answer(long_message)
+
+
+            
         except Exception as e:
             logger.error(f"Ошибка: {e}")
             await message.answer(f"❌ Ошибка: {str(e)}")

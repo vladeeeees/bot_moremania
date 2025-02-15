@@ -1,3 +1,4 @@
+
 import sys
 import pandas as pd
 from datetime import datetime, timedelta
@@ -9,10 +10,7 @@ import threading  # Добавлен новый импорт для работы
 logging.basicConfig(level=logging.INFO)
 
 def calculate_remaining_days(end_date):
-    """
-    Рассчитывает оставшеее время до истечения срока документа.
-    Возвращает форматированную строку или статус ошибки.
-    """
+
     if pd.isna(end_date):
         return "Нет данных"
     try:
@@ -32,20 +30,7 @@ def calculate_remaining_days(end_date):
         logging.error(f"Ошибка при обработке даты: {e}")
         return "Ошибка даты"
 
-def delete_file_after_delay(file_path, delay=60):
-    """
-    Удаляет указанный файл через заданное количество секунд
-    """
-    def delete_file():
-        try:
-            os.remove(file_path)
-            logging.info(f"Файл {file_path} успешно удалён.")
-        except Exception as e:
-            logging.error(f"Ошибка при удалении файла {file_path}: {e}")
     
-    # Создаем и запускаем таймер
-    timer = threading.Timer(delay, delete_file)
-    timer.start()
 
 # Проверка аргументов командной строки
 if len(sys.argv) < 2:
@@ -68,9 +53,12 @@ if key not in locations:
 location_name = locations[key]
 
 # Пути к файлам и настройка выходной директории
-source_file = r"C:\Проекты\Таблицы\все сотрудники в штате  по моремании.xlsx"
-registration_file = r"C:\Проекты\Таблицы\регистрация.xlsx"
-patent_file = r"C:\Проекты\Таблицы\патент.xlsx"
+script_dir = os.path.dirname(__file__)  # Получаем путь к директории скрипта
+tables_dir = os.path.join(script_dir, 'tables')  # Папка с таблицами рядом со скриптом
+
+source_file = os.path.join(tables_dir, 'все сотрудники в штате  по моремании.xlsx')
+registration_file = os.path.join(tables_dir, 'регистрация.xlsx')
+patent_file = os.path.join(tables_dir, 'патент.xlsx')
 output_folder = os.path.join(os.getcwd(), 'выгрузки')
 os.makedirs(output_folder, exist_ok=True)
 
@@ -162,8 +150,6 @@ try:
     # Вывод результата для бота
     print(f"SUCCESS:{output_file}")
     
-    # Запуск таймера для удаления файла через 60 секунд
-    delete_file_after_delay(output_file, 60)
     
 except Exception as e:
     logging.error(f"Ошибка при сохранении файла: {e}")
